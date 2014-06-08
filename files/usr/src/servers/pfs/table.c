@@ -10,6 +10,7 @@
 #include "buf.h"
 #include "uds.h"
 
+/* CHANGE: 33 & 34 = no_sys */
 /* File System Handlers (pfs) */
 PUBLIC _PROTOTYPE (int (*fs_call_vec[]),
 				(message *fs_m_in, message *fs_m_out) ) = {

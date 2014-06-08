@@ -29,8 +29,9 @@ FORWARD _PROTOTYPE(int fs_sendrec_f, (char *file, int line, endpoint_t fs_e,
 
 #define fs_sendrec(e, m) fs_sendrec_f(__FILE__, __LINE__, (e), (m))
 
-/*===================== req_metawrite ===============================*/
+/* CHANGE START */
 
+/*===================== req_metawrite ===============================*/
 PUBLIC int req_metawrite(
   endpoint_t fs_e,
   endpoint_t user_e,
@@ -56,9 +57,7 @@ PUBLIC int req_metawrite(
 	return OK;		
 }
 
-
 /*===================== req_metaread ===================================*/
-
 PUBLIC int req_metaread(
   endpoint_t fs_e,
   int inode_nr
@@ -75,6 +74,8 @@ PUBLIC int req_metaread(
 
 	return OK;
 }
+
+/* CHANGE END */
 
 /*===========================================================================*
  *			req_breadwrite					     *

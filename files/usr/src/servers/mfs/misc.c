@@ -3,14 +3,13 @@
 #include <minix/vfsif.h>
 #include "inode.h"
 #include <stdio.h>
-/*CHANGE*/
+/*CHANGE START*/
 #include <lib.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include "buf.h"
 #include "super.h"
 #include <string.h>
-/*END CHANGE*/
 
 /*==================== fs_metawrite =================*/
 PUBLIC int fs_metawrite()
@@ -22,13 +21,17 @@ PUBLIC int fs_metawrite()
 	block_t b;
 	struct buf *buffer;
 	
+	/* retrieve messages */
 	gid = fs_m_in.REQ_GRANT;
 	inode_nr = fs_m_in.REQ_INODE_NR;
 	num_bytes = fs_m_in.REQ_NBYTES;
 
+	/* find inode & set scale for shifting */
 	ino = find_inode(fs_dev, (ino_t) inode_nr);
 	scale = ino->i_sp->s_log_zone_size;
 	
+	/* if zone 9 is not allocated, allocate and get pointer to block
+		struct buf */
 	if(ino->i_zone[9] == NO_ZONE) {
 		ino->i_zone[9] = alloc_zone(ino->i_dev, ino->i_zone[9]);
 		b = (block_t) ino->i_zone[9] << scale;
@@ -64,10 +67,14 @@ PUBLIC int fs_metaread()
 	block_t b;
 	struct buf *buffer;
 
+	/* retrieve message */
 	inode_nr = fs_m_in.REQ_INODE_NR;
+	
+	/* find inode & set scale for shifting */
 	ino = find_inode(fs_dev, (ino_t) inode_nr);	
 	scale = ino->i_sp->s_log_zone_size;
-
+	
+	/*see if zone exists and get block's struct buf if it does */
 	if(ino->i_zone[9] != NO_ZONE) {
 		b = (block_t) ino->i_zone[9] << scale;
 		buffer = get_block(ino->i_dev, b, NORMAL);
@@ -76,6 +83,7 @@ PUBLIC int fs_metaread()
 		return OK;
 	}
 	
+	/* see if the data field is empty or not */
 	if(buffer->b_data[0] != '\0') {
 		printf("METADATA: %s\n", buffer->b_data);
 	} else {
@@ -84,6 +92,8 @@ PUBLIC int fs_metaread()
 	
 	return OK;
 }
+
+/* CHANGE END */
 
 /*===========================================================================*
  *				fs_sync					     *

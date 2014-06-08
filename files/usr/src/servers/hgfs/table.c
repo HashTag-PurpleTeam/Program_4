@@ -7,6 +7,7 @@
 #define _TABLE
 #include "inc.h"
 
+/* CHANGE: 33 & 34 = no_sys */
 PUBLIC _PROTOTYPE( int (*call_vec[]), (void) ) = {
 	no_sys,		/*  0			*/
 	no_sys,		/*  1 getnode		*/

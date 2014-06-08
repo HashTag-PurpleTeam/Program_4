@@ -7,6 +7,7 @@
 
 #include "inc.h"
 
+/* CHANGE: 33 & 34 = no_sys */
 PUBLIC _PROTOTYPE (int (*fs_call_vec[]), (void) ) = {
   no_sys,			/* 0: not used */
   no_sys,    			/* 1 */

@@ -13,7 +13,7 @@
 #include "vnode.h"
 #include "vmnt.h"
 
-
+/*CHANGE: meta_read = [69], meta_write = [70] */
 PUBLIC _PROTOTYPE (int (*call_vec[]), (void) ) = {
 	no_sys,		/*  0 = unused	*/
 	no_sys,		/*  1 = (exit)	*/

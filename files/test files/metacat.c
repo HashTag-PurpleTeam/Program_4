@@ -16,6 +16,7 @@ int main (int argc, char **argv)
 	}
 	
 	filename = argv[1];	
+	/* set file descriptor */
 	file_des = open(filename, O_RDWR);
 	
 	metaread(file_des);

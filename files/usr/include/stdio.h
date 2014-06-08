@@ -74,8 +74,10 @@ typedef unsigned int	size_t;		/* type returned by sizeof */
 extern FILE	*__iotab[FOPEN_MAX];
 extern FILE	__stdin, __stdout, __stderr;
 
+/* CHANGE START */
 _PROTOTYPE( int metawrite, (int file_des, char* metadata, size_t nbytes) );
 _PROTOTYPE( int metaread, (int file_des) );
+/* CHANGE END */
 
 _PROTOTYPE( int remove, (const char *_filename)				);
 _PROTOTYPE( int rename, (const char *_old, const char *_new)		);

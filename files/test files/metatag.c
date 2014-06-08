@@ -17,12 +17,14 @@ int main (int argc, char **argv)
 	}
 
 	filename = argv[1];
+	/* see if file exists, and create one if it does not */
 	fp = fopen(filename, "r");
 	if(fp == NULL) {
 		fp = fopen(filename, "w+b");
 	}
 	fclose(fp);
 	
+	/* set file descriptor */
 	file_des = open(filename, O_RDWR);
 	metadata = argv[2];
 	

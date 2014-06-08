@@ -52,9 +52,10 @@ _PROTOTYPE( int truncate_inode, (struct inode *rip, off_t len)		);
 /* misc.c */
 _PROTOTYPE( int fs_flush, (void)					);
 _PROTOTYPE( int fs_sync, (void)						);
-_PROTOTYPE( int say_hello, (void) );
+/* CHANGE START */
 _PROTOTYPE( int fs_metawrite, (void) );
 _PROTOTYPE( int fs_metaread, (void) );
+/* CHANGE END */
 
 /* mount.c */
 _PROTOTYPE( int fs_mountpoint, (void)					);

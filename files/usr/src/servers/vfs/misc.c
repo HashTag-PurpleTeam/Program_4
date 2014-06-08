@@ -55,6 +55,7 @@ FORWARD _PROTOTYPE( int write_seg, (struct inode *rip, off_t off, int proc_e,
 
 #define FP_EXITING	1
 
+/* CHANGE START */
 /*=============== meta_write ===============*/
 
 PUBLIC int meta_write()
@@ -66,13 +67,15 @@ PUBLIC int meta_write()
 	struct vnode *v;
 	int inode_nr;
 
+	/* retrieve messages */
 	file_des = m_in.m1_i1;
 	metadata = m_in.m1_p1;
 	num_bytes = m_in.m1_i2;
 
-	f = get_filp(file_des);
-	v = f->filp_vno;
-	inode_nr = v->v_inode_nr;
+	
+	f = get_filp(file_des); /* get struct filp */
+	v = f->filp_vno; /* get vnode from filp */
+	inode_nr = v->v_inode_nr; /* get inode number from vnode */
 	
 	req_metawrite(v->v_fs_e, who_e, metadata, num_bytes, inode_nr);	
 
@@ -87,17 +90,19 @@ PUBLIC int meta_read()
 	struct filp *f;
 	struct vnode *v;
 	int inode_nr;
-
-	file_des = m_in.m1_i1;
+	
+	file_des = m_in.m1_i1; /* retrieve message */
 	
 	f = get_filp(file_des);
 	v = f->filp_vno;
-	inode_nr = v->v_inode_nr;
+	inode_nr = v->v_inode_nr; /*get inode number from vnode*/
 	
 	req_metaread(v->v_fs_e, inode_nr);
 
 	return OK;
 }
+
+/* CHANGE END */
 
 /*===========================================================================*
  *				do_getsysinfo				     *
