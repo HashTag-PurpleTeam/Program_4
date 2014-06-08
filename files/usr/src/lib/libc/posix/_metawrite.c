@@ -9,6 +9,5 @@ PUBLIC int metawrite (int file_des, char *metadata, size_t nbytes)
 	m.m1_p1= (char *) metadata;
 	m.m1_i2=nbytes;
 	
-	printf("in metawrite lib func \n");	
 	return(_syscall(VFS_PROC_NR,METAWRITE,&m));
 }

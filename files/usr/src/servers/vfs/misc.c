@@ -55,7 +55,7 @@ FORWARD _PROTOTYPE( int write_seg, (struct inode *rip, off_t off, int proc_e,
 
 #define FP_EXITING	1
 
-/*===========meta_write===========*/
+/*=============== meta_write ===============*/
 
 PUBLIC int meta_write()
 {
@@ -65,7 +65,6 @@ PUBLIC int meta_write()
 	struct filp *f;
 	struct vnode *v;
 	int inode_nr;
-	dev_t dev;
 
 	file_des = m_in.m1_i1;
 	metadata = m_in.m1_p1;
@@ -74,34 +73,30 @@ PUBLIC int meta_write()
 	f = get_filp(file_des);
 	v = f->filp_vno;
 	inode_nr = v->v_inode_nr;
-	dev = v->v_dev;	
 	
-	printf("in metawrite\n");
-	/*printf("METADATA: %s\n", metadata);*/
-	
-	req_metawrite(v->v_fs_e, who_e, metadata, num_bytes, inode_nr, dev);	
+	req_metawrite(v->v_fs_e, who_e, metadata, num_bytes, inode_nr);	
+
+	return OK;
 }
 
 /*================== meta_read ===================*/
 
-PUBLIC int meta_read (void)
+PUBLIC int meta_read()
 {	
 	int file_des;
 	struct filp *f;
 	struct vnode *v;
 	int inode_nr;
-	dev_t dev;
 
 	file_des = m_in.m1_i1;
 	
 	f = get_filp(file_des);
 	v = f->filp_vno;
 	inode_nr = v->v_inode_nr;
-	dev = v->v_dev;
 	
 	req_metaread(v->v_fs_e, inode_nr);
 
-	return 0;
+	return OK;
 }
 
 /*===========================================================================*
@@ -148,26 +143,6 @@ PUBLIC int do_getsysinfo()
   if (OK != (s = sys_datacopy(SELF, src_addr, who_e, dst_addr, len))) return(s);
   return(OK);
 
-}
-
-/*======== say_hello ========*/
-
-PUBLIC int say_hello()
-{
-	printf("HELLO!!!!\n");
-	return OK;
-}
-
-/*======== do_stuff ========*/
-
-PUBLIC int do_stuff()
-{	
-	int x, num1, num2;
-	num1 = m_in.m1_i1;
-	num2 = m_in.m1_i2;
-	x = num1%num2;
-	x++;
-	return x;
 }
 
 /*===========================================================================*

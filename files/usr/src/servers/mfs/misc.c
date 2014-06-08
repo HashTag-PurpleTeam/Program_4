@@ -15,21 +15,12 @@
 /*==================== fs_metawrite =================*/
 PUBLIC int fs_metawrite()
 {
-	int file_des;
-	char *metadata;
-	int num_bytes;
 	cp_grant_id_t gid;
-	int inode_nr;
-	dev_t dev;
+	int inode_nr, num_bytes, r;
 	struct inode *ino;
 	short scale;
 	block_t b;
-	struct super_block *sb;
 	struct buf *buffer;
-	int x, r;
-	int i;
-	
-	printf("in fs_metawrite (mfs)\n");
 	
 	gid = fs_m_in.REQ_GRANT;
 	inode_nr = fs_m_in.REQ_INODE_NR;
@@ -39,10 +30,8 @@ PUBLIC int fs_metawrite()
 	scale = ino->i_sp->s_log_zone_size;
 	
 	if(ino->i_zone[9] == NO_ZONE) {
-		printf("in if no_zone\n");
 		ino->i_zone[9] = alloc_zone(ino->i_dev, ino->i_zone[9]);
 		b = (block_t) ino->i_zone[9] << scale;
-		printf("before get_block\n");
 		buffer = get_block(ino->i_dev, b, NORMAL);
 		zero_block(buffer);
 	} else {
@@ -50,20 +39,17 @@ PUBLIC int fs_metawrite()
 		buffer = get_block(ino->i_dev, b, NORMAL);
 	}
 	
+	/* reinitialize the b_data field */
 	memset(&buffer->b_data, '\0', strlen(buffer->b_data));
 	
-	printf("before safecopyfrom\n");
+	/* store the metadata in the b_data field */
 	r = sys_safecopyfrom(VFS_PROC_NR, gid, 0, 
 		(vir_bytes) buffer->b_data, num_bytes, D);
-
-	buffer->b_dirt = DIRTY;
 	
-	printf("num_bytes = %d\n", num_bytes);
-	printf("METADATA: ");
-	for(i = 0; i < num_bytes; i++){
-		printf("%c", buffer->b_data[i]);
-	}
-	printf("\n");
+	/* set dirty flags and increase counters */
+	buffer->b_dirt = DIRTY;
+	ino->i_dirt = DIRTY;
+	put_block(buffer, FULL_DATA_BLOCK);
 	
 	return OK;
 }
@@ -73,7 +59,6 @@ PUBLIC int fs_metaread()
 {
 	int file_des;
 	int inode_nr;
-	dev_t dev;
 	struct inode *ino;	
 	short scale;
 	block_t b;
@@ -86,12 +71,17 @@ PUBLIC int fs_metaread()
 	if(ino->i_zone[9] != NO_ZONE) {
 		b = (block_t) ino->i_zone[9] << scale;
 		buffer = get_block(ino->i_dev, b, NORMAL);
-	}else{
-		fprintf(stderr, "ERROR: no metadata written to this file.\n");
+	}else {
+		printf("ERROR: no metadata written to this file (no zone).\n");
+		return OK;
 	}
 	
-	printf("METADATA: %s\n", buffer->b_data);
-
+	if(buffer->b_data[0] != '\0') {
+		printf("METADATA: %s\n", buffer->b_data);
+	} else {
+		printf("ERROR: no metadata written to this file (array empty).\n");
+	}
+	
 	return OK;
 }
 

@@ -17,9 +17,13 @@ int main (int argc, char **argv)
 	}
 
 	filename = argv[1];
+	fp = fopen(filename, "r");
+	if(fp == NULL) {
+		fp = fopen(filename, "w+b");
+	}
+	fclose(fp);
+	
 	file_des = open(filename, O_RDWR);
-	fp = fopen(filename, "r+");
-
 	metadata = argv[2];
 	
 	metawrite(file_des, metadata, strlen(metadata));

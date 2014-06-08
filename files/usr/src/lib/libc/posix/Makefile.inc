@@ -113,6 +113,4 @@ SRCS+= 	 \
 	usleep.c \
 	poll.c \
 	_metawrite.c \
-	_metawrite2.c \
-	_metaread.c \
-	_metaread2.c
+	_metaread.c

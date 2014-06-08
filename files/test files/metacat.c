@@ -19,6 +19,5 @@ int main (int argc, char **argv)
 	file_des = open(filename, O_RDWR);
 	
 	metaread(file_des);
-	/*printf("Metadata = %s\n", metadata);*/
 	return 0;	
 }

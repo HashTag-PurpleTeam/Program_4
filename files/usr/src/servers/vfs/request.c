@@ -36,16 +36,12 @@ PUBLIC int req_metawrite(
   endpoint_t user_e,
   char* metadata,
   unsigned int num_bytes,
-  int inode_nr,
-  dev_t dev
+  int inode_nr
 )
 {
 	int r;
 	message m;
 	cp_grant_id_t grant_id;	
-	
-	printf("in req_metawrite\n");
-	/*printf("METADATA: %s\n", metadata);*/
 	
 	grant_id = cpf_grant_magic(fs_e, user_e, (vir_bytes) metadata, num_bytes, CPF_READ);	
 
@@ -68,8 +64,8 @@ PUBLIC int req_metaread(
   int inode_nr
 )
 {
-	message m;
 	int r;
+	message m;
 	
 	m.m_type = REQ_METAREAD;
 	m.REQ_INODE_NR = inode_nr;
