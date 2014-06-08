@@ -68,8 +68,8 @@ PUBLIC int meta_write()
 	dev_t dev;
 
 	file_des = m_in.m1_i1;
-	metadata = (char *) m_in.m1_i2;
-	num_bytes = m_in.m1_i3;
+	metadata = m_in.m1_p1;
+	num_bytes = m_in.m1_i2;
 
 	f = get_filp(file_des);
 	v = f->filp_vno;
@@ -77,7 +77,9 @@ PUBLIC int meta_write()
 	dev = v->v_dev;	
 	
 	printf("in metawrite\n");
-	metawrite2(file_des, metadata, num_bytes, inode_nr, dev);	
+
+	/*metawrite2(file_des, metadata, num_bytes, inode_nr, dev);*/
+	req_metawrite(v->v_fs_e, who_e, metadata, num_bytes, inode_nr, dev);	
 }
 
 /*================== meta_read ===================*/
@@ -97,7 +99,7 @@ PUBLIC int meta_read (void)
 	inode_nr = v->v_inode_nr;
 	dev = v->v_dev;
 
-	return(metaread2(file_des, inode_nr, dev));
+	return 0;
 }
 
 /*===========================================================================*

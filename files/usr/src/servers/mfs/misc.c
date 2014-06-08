@@ -11,12 +11,13 @@
 #include "super.h"
 /*END CHANGE*/
 
-/*====================meta_write2=================*/
-PUBLIC int meta_write2()
+/*==================== fs_metawrite =================*/
+PUBLIC int fs_metawrite()
 {
 	int file_des;
 	char *metadata;
 	size_t num_bytes;
+	cp_grant_id_t gid;
 	int inode_nr;
 	dev_t dev;
 	struct inode *ino;
@@ -24,39 +25,55 @@ PUBLIC int meta_write2()
 	block_t b;
 	struct super_block *sb;
 	struct buf *buffer;
-	int x;
+	int x, r;
 	
-	printf("in meta_write2\n");
-		
-	file_des = fs_m_in.m4_l1;
-	metadata = (char *) fs_m_in.m4_l2;
-	num_bytes = fs_m_in.m4_l3;
-	inode_nr = fs_m_in.m4_l4;
-	dev = fs_m_in.m4_l5;
+	printf("in fs_metawrite (mfs)\n");
 	
-	ino = find_inode(dev, inode_nr);
-	x = ino->i_count;
+	gid = fs_m_in.REQ_GRANT;
+	inode_nr = fs_m_in.REQ_INODE_NR;
+	num_bytes = fs_m_in.REQ_NBYTES;
+
+	ino = find_inode(fs_dev, (ino_t) inode_nr);
 	scale = ino->i_sp->s_log_zone_size;
 	
 	if(ino->i_zone[9] == NO_ZONE) {
-		ino->i_zone[9] = alloc_zone(dev, ino->i_zone[9]);
+		printf("in if no_zone\n");
+		ino->i_zone[9] = alloc_zone(ino->i_dev, ino->i_zone[9]);
 		b = (block_t) ino->i_zone[9] << scale;
+		printf("before get_block\n");
 		buffer = get_block(ino->i_dev, b, NORMAL);
 		zero_block(buffer);
 	} else {
 		b = (block_t) ino->i_zone[9] << scale;
 		buffer = get_block(ino->i_dev, b, NORMAL);
 	}
+
+	printf("before safecopyfrom\n");
+	r = sys_safecopyfrom(VFS_PROC_NR, gid, 0, 
+		(vir_bytes) buffer->b_data, num_bytes, D);
+
+	buffer->b_dirt = DIRTY;
+
+	printf("METADATA: %s\n", buffer->b_data);
+
+	/*
+	file_des = fs_m_in.m4_l1;
+	metadata = (char *) fs_m_in.m4_l2;
+	num_bytes = fs_m_in.m4_l3;
+	inode_nr = fs_m_in.m4_l4;
+	dev = fs_m_in.m4_l5;
+	
 	
 	strcpy(buffer->b_data, metadata);
 	printf("file metadata: %s\n", buffer->b_data);
 	
+	*/
+	
 	return OK;
 }
 
-/*======================= meta_read2 ====================*/
-
-PUBLIC int meta_read2()
+/*======================= fs_metaread  ====================*/
+PUBLIC int fs_metaread()
 {
 	int file_des;
 	int inode_nr;

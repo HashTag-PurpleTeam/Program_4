@@ -53,8 +53,8 @@ _PROTOTYPE( int truncate_inode, (struct inode *rip, off_t len)		);
 _PROTOTYPE( int fs_flush, (void)					);
 _PROTOTYPE( int fs_sync, (void)						);
 _PROTOTYPE( int say_hello, (void) );
-_PROTOTYPE( int meta_write2, (void) );
-_PROTOTYPE( int meta_read2, (void) );
+_PROTOTYPE( int fs_metawrite, (void) );
+_PROTOTYPE( int fs_metaread, (void) );
 
 /* mount.c */
 _PROTOTYPE( int fs_mountpoint, (void)					);
