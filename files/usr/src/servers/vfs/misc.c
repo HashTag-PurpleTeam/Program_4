@@ -77,8 +77,8 @@ PUBLIC int meta_write()
 	dev = v->v_dev;	
 	
 	printf("in metawrite\n");
-
-	/*metawrite2(file_des, metadata, num_bytes, inode_nr, dev);*/
+	/*printf("METADATA: %s\n", metadata);*/
+	
 	req_metawrite(v->v_fs_e, who_e, metadata, num_bytes, inode_nr, dev);	
 }
 
@@ -98,6 +98,8 @@ PUBLIC int meta_read (void)
 	v = f->filp_vno;
 	inode_nr = v->v_inode_nr;
 	dev = v->v_dev;
+	
+	req_metaread(v->v_fs_e, inode_nr);
 
 	return 0;
 }

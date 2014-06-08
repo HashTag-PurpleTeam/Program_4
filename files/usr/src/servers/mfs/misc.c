@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include "buf.h"
 #include "super.h"
+#include <string.h>
 /*END CHANGE*/
 
 /*==================== fs_metawrite =================*/
@@ -16,7 +17,7 @@ PUBLIC int fs_metawrite()
 {
 	int file_des;
 	char *metadata;
-	size_t num_bytes;
+	int num_bytes;
 	cp_grant_id_t gid;
 	int inode_nr;
 	dev_t dev;
@@ -26,6 +27,7 @@ PUBLIC int fs_metawrite()
 	struct super_block *sb;
 	struct buf *buffer;
 	int x, r;
+	int i;
 	
 	printf("in fs_metawrite (mfs)\n");
 	
@@ -47,27 +49,21 @@ PUBLIC int fs_metawrite()
 		b = (block_t) ino->i_zone[9] << scale;
 		buffer = get_block(ino->i_dev, b, NORMAL);
 	}
-
+	
+	memset(&buffer->b_data, '\0', strlen(buffer->b_data));
+	
 	printf("before safecopyfrom\n");
 	r = sys_safecopyfrom(VFS_PROC_NR, gid, 0, 
 		(vir_bytes) buffer->b_data, num_bytes, D);
 
 	buffer->b_dirt = DIRTY;
-
-	printf("METADATA: %s\n", buffer->b_data);
-
-	/*
-	file_des = fs_m_in.m4_l1;
-	metadata = (char *) fs_m_in.m4_l2;
-	num_bytes = fs_m_in.m4_l3;
-	inode_nr = fs_m_in.m4_l4;
-	dev = fs_m_in.m4_l5;
 	
-	
-	strcpy(buffer->b_data, metadata);
-	printf("file metadata: %s\n", buffer->b_data);
-	
-	*/
+	printf("num_bytes = %d\n", num_bytes);
+	printf("METADATA: ");
+	for(i = 0; i < num_bytes; i++){
+		printf("%c", buffer->b_data[i]);
+	}
+	printf("\n");
 	
 	return OK;
 }
@@ -81,21 +77,21 @@ PUBLIC int fs_metaread()
 	struct inode *ino;	
 	short scale;
 	block_t b;
-	struct buf *buffer;	
+	struct buf *buffer;
 
-	file_des = fs_m_in.m4_l1;
-	inode_nr = fs_m_in.m4_l2;
-	dev = fs_m_in.m4_l3;
-
-	ino = find_inode(dev, inode_nr);
+	inode_nr = fs_m_in.REQ_INODE_NR;
+	ino = find_inode(fs_dev, (ino_t) inode_nr);	
 	scale = ino->i_sp->s_log_zone_size;
 
 	if(ino->i_zone[9] != NO_ZONE) {
 		b = (block_t) ino->i_zone[9] << scale;
 		buffer = get_block(ino->i_dev, b, NORMAL);
+	}else{
+		fprintf(stderr, "ERROR: no metadata written to this file.\n");
 	}
 	
 	printf("METADATA: %s\n", buffer->b_data);
+
 	return OK;
 }
 

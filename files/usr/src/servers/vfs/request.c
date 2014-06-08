@@ -60,6 +60,26 @@ PUBLIC int req_metawrite(
 	return OK;		
 }
 
+
+/*===================== req_metaread ===================================*/
+
+PUBLIC int req_metaread(
+  endpoint_t fs_e,
+  int inode_nr
+)
+{
+	message m;
+	int r;
+	
+	m.m_type = REQ_METAREAD;
+	m.REQ_INODE_NR = inode_nr;
+
+	r = fs_sendrec(fs_e, &m);
+	if(r != OK) return(r);
+
+	return OK;
+}
+
 /*===========================================================================*
  *			req_breadwrite					     *
  *===========================================================================*/
