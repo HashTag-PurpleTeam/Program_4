@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <string.h>
 
 int main (int argc, char **argv)
 {
@@ -21,6 +22,6 @@ int main (int argc, char **argv)
 
 	metadata = argv[2];
 	
-	metawrite(file_des, metadata, sizeof(metadata));
+	metawrite(file_des, metadata, strlen(metadata));
 	return 0;
 }
