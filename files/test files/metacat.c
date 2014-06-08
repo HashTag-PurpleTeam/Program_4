@@ -7,7 +7,7 @@
 int main (int argc, char **argv)
 {
 	char* filename;
-	char* metadata;
+	char metadata[256];
 	int file_des;	
 
 	if(argc != 2){
@@ -18,7 +18,7 @@ int main (int argc, char **argv)
 	filename = argv[1];	
 	file_des = open(filename, O_RDWR);
 	
-	metaread(file_des);
+	metaread(file_des, metadata, sizeof metadata);
 	/*printf("Metadata = %s\n", metadata);*/
 	return 0;	
 }
